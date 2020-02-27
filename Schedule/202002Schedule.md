@@ -5,7 +5,9 @@
 > 1. coding for working / practising  `1h`
 > 2. 毕业论文  `3h`
 > 3. 前端知识点回顾  `3h`
-> 4. one YouTube vlog + one 片段剪辑  `30min`
+> 4. 片段剪辑  `30min`
 > 5. one Leetcode  `60min`
 > 6. one React Q&A  `60min`
 > 7. flexible time  `90min`
+
+ 
