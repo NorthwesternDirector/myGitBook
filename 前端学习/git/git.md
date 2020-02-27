@@ -1,6 +1,6 @@
 ## Git `操作手册`
 
-<img src="/Users/fanshun/Documents/我的个人文件/myGitBook/前端学习/git/git.png" alt="git仓库结构"/>
+<img src="https://github.com/NorthwesternDirector/myGitBook/blob/master/前端学习/git/git.png"/>
 
 > 看之前需要搞清以下概念：
 
