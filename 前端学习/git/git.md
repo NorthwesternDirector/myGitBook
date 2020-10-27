@@ -126,14 +126,22 @@ git merge origin/master
 
 ### 10. 撤销
 
-*（1）撤销commit*
+*（1）撤销 commit*
 
 ```js
 git reset --soft HEAD^
 //（默认）--mixed 撤销 commit，并且撤销 git add . 操作
 // --soft 撤销 commit，不撤销 git add .
-//HEAD^ HEAD~n 标志位：前n个（commit）
+//HEAD^ HEAD~n 标志位：前n个（commit） 
 ```
+
+*（2）撤销 push*
+
+```
+git revert ?????
+```
+
+
 
 ### 11. Gitlab&Github
 
@@ -148,5 +156,11 @@ Host *xiaomi.com
     IdentityFile ~/.ssh/id_rsa_lab
 ```
 
+### 12. 修改分支名
 
+```
+git branch -m new-name
+git push (git push 后会有提示：git push origin HEAD:new-name)
+生成新的 merge request ✅
+```
 
