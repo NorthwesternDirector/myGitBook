@@ -1,4 +1,4 @@
-## Git `操作手册`
+##  Git `操作手册`
 
 <img src="https://github.com/NorthwesternDirector/myGitBook/blob/master/%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0/git/git.png?raw=true"/>
 
@@ -126,7 +126,7 @@ git merge origin/master
 
 ### 10. 撤销
 
-*（1）撤销 commit*
+*（1）撤销 本地 commit*
 
 ```js
 git reset --soft HEAD^
@@ -135,13 +135,13 @@ git reset --soft HEAD^
 //HEAD^ HEAD~n 标志位：前n个（commit） 
 ```
 
-*（2）撤销 push*
+*（2）撤销 gitlab commit*
 
+```js
+git log //找到回退的版本的 commitId
+git reset --soft/--hard/--mix commitId //本地回退到指定版本
+git push origin branchName -- force //强制覆盖更新到远程分支
 ```
-git revert ?????
-```
-
-
 
 ### 11. Gitlab&Github
 

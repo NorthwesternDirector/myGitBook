@@ -2,9 +2,13 @@
 
 官方参考 ： [quick start]( https://reactrouter.com/web/guides/quick-start)
 
- React Hooks API  `useParams` `useHistory` `useLocation`
+- React Router 核心库
+  -  绑定 web 端的 `react-router-dom`
+  -  绑定 React Native 的 `react-router-native`
+  -  集成 Redux 的 `react-router-redux`
+  -  配置静态路由的 `react-router-config`
 
-
+Q：为什么 React-Router 不和 React 封装在一起？？？
 
 ！！！！ Prompt。Route 的参数～～～
 
@@ -20,7 +24,7 @@ request(`/api/meta/adhoc/history/${queryId}`) //url，useParams只能获取此�
 * POST 
 
 ```react
-request('/api/meta/dataImport/deleteById', { method: 'POST', body: param }, true) //request body
+request('/api/meta/dataImport/deleteById', { method: 'POST', data: param }, true) //request body
 ```
 
 * 相对路径规则
@@ -33,15 +37,37 @@ request('/api/meta/dataImport/deleteById', { method: 'POST', body: param }, true
 
 `useParams` 返回一个包含了 URL 参数键值对的对象，功能类似 `<Route>` 的 `match.params`
 
+注意⚠️：只有 path: '/a/b/:c/:d' 中的 '':key" 才能被 `useParams` 匹配到。useParams 返回的是{a:value, b:value}
+
+```js
+
+```
+
+
+
 ##### useLocation
 
- `useLocation` 返回代表当前 URL 的 location 对象，功能类似`useState`，当URL改变时总会返回一个新的 location 对象
+ `useLocation` 返回代表当前 URL 的 location 对象，功能类似 `useState`，当URL改变时总会返回一个新的 location 对象。useLocation 可以视为简版的 Location API， Location API 数据&方法更加全面
 
-返回对象包含的参数：**`hash` `pathname`(#号后的内容) `search`(问号后的内容) `state`**
+*以  localhost:3000/#/home/indexdetail?id=1 为例 👇：*
 
-<img src="https://github.com/NorthwesternDirector/myGitBook/blob/master/%E5%85%B6%E4%BB%96/%E5%BC%95%E5%85%A5%E5%9B%BE%E7%89%87/react/redux2.PNG?raw=true"/>
-
-⚠️：window.location 数据更加全面
+|              | useLocation (HashRouter下) | Location                                        | 备注                 |
+| ------------ | -------------------------- | ----------------------------------------------- | -------------------- |
+| hash         | 🌟 ""                       | "#/home/indexdetail?id=1"                       |                      |
+| pathname     | "/home/indexdetail"        | "/"                                             |                      |
+| search       | "?id=1"                    | 🌟 ""                                            |                      |
+| state❓       | undefined                  | -                                               | 支持跳转携带一些状态 |
+| host         | -                          | "localhost:3000"                                |                      |
+| hostname     | -                          | "localhost"                                     |                      |
+| href         | -                          | "http://localhost:3000/#/home/indexdetail?id=1" |                      |
+| origin       | -                          | "http://localhost:3000"                         |                      |
+| port         | -                          | "3000"                                          |                      |
+| protocol     | -                          | "http:"                                         |                      |
+| assign ( )   | -                          | ✅                                               |                      |
+| reload ( )   | -                          | ✅                                               |                      |
+| replace ( )  | -                          | ✅                                               |                      |
+| toString ( ) | -                          | ✅                                               |                      |
+| valueOf ( )  | -                          | ✅                                               |                      |
 
 ##### useHistory
 
@@ -55,14 +81,6 @@ import {useHistory} from 'react-router-dom'
 const history = useHistory()
 history.push('url')//进行页面跳转
 ```
-
-- React Router 核心库
-  -  绑定 web 端的 `react-router-dom`
-  - 绑定 React Native 的 `react-router-native`
-  - 集成 Redux 的 `react-router-redux`
-  - 配置静态路由的 `react-router-config`
-
-Q：为什么 React-Router 不和 React 封装在一起？？？
 
 #### 3. 若干组件👇
 
