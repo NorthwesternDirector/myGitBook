@@ -1,5 +1,7 @@
 # React-router 🎉 `v5`
 
+一句话解释：***通过指定方法监听路由的变化，并利用监听到的变化值去匹配渲染不同的组件***
+
 官方参考 ： [quick start 传送门]( https://reactrouter.com/web/guides/quick-start)
 
 - React Router 核心库
@@ -8,43 +10,66 @@
   -  集成 Redux 的 `react-router-redux`
   -  配置静态路由的 `react-router-config`
 
-Q：为什么 React-Router 不和 React 封装在一起？？？
+Q：为什么 React-Router 不和 React 封装在一起
+
+🤔：为了支持多端考虑的，不同终端的 React-Router 实现原理不同
 
 ## 常用API
 
 ### HOOKS
 
-#### useParams
+> 三个 Hook 几乎覆盖了下文提到的旧版本三兄弟: match，location，history 的所有功能
+
+#### useParams (match)
 
 `useParams` 返回一个包含了 URL 参数键值对的对象，功能类似 `<Route>` 的 `match.params`
 
 注意⚠️：只有 path: '/a/b/:c/:d' 中的 '':key" 才能被 `useParams` 匹配到。useParams 返回的是{a:value, b:value}
 
-#### useLocation
+ **match 对象**
+  `match` 对象包含了 `<Route path>` 如何与URL匹配的信息。`match` 对象包含以下属性：
+
+  - `params` -（ object 类型）即路径参数，通过解析URL中动态的部分获得的键值对（⚠️useParams只返回这个参数）
+  - `isExact` - 当为 `true` 时，整个URL都需要匹配
+  - `path` -（ string 类型）用来做匹配的路径格式。在需要嵌套 `<Route>` 的时候用到
+  - `url` -（ string 类型）URL匹配的部分，在需要嵌套 `<Link>` 的时候会用到
+
+#### useLocation (location)
 
  `useLocation` 返回代表当前 URL 的 location 对象，功能类似 `useState`，当URL改变时总会返回一个新的 location 对象。useLocation 可以视为简版的 Location API， Location API 数据&方法更加全面
 
-*以  localhost:3000/#/home/indexdetail?id=1 为例 👇：*
+*以  localhost:3000/#/home/indexdetail?id=1 为例 👇：*（HashRouter&BrowserRouter 下表现一致）
 
-| 参数名       | useLocation (HashRouter下) | Location                                        | 备注                 |
-| ------------ | -------------------------- | ----------------------------------------------- | -------------------- |
-| hash         | 🌟 ""                       | "#/home/indexdetail?id=1"                       |                      |
-| pathname     | "/home/indexdetail"        | "/"                                             |                      |
-| search       | "?id=1"                    | 🌟 ""                                            |                      |
-| state        | undefined                  | 🚫                                               | 支持跳转携带一些状态 |
-| host         | 🚫                          | "localhost:3000"                                |                      |
-| hostname     | 🚫                          | "localhost"                                     |                      |
-| href         | 🚫                          | "http://localhost:3000/#/home/indexdetail?id=1" |                      |
-| origin       | 🚫                          | "http://localhost:3000"                         |                      |
-| port         | 🚫                          | "3000"                                          |                      |
-| protocol     | 🚫                          | "http:"                                         |                      |
-| assign ( )   | 🚫                          | ✅                                               |                      |
-| reload ( )   | 🚫                          | ✅                                               |                      |
-| replace ( )  | 🚫                          | ✅                                               |                      |
-| toString ( ) | 🚫                          | ✅                                               |                      |
-| valueOf ( )  | 🚫                          | ✅                                               |                      |
+| 参数名       | useLocation         | Location                                        | 备注                 |
+| ------------ | ------------------- | ----------------------------------------------- | -------------------- |
+| hash         | 🌟 ""                | "#/home/indexdetail?id=1"                       |                      |
+| pathname     | "/home/indexdetail" | "/"                                             |                      |
+| search       | "?id=1"             | 🌟 ""                                            |                      |
+| state        | undefined           | 🚫                                               | 支持跳转携带一些状态 |
+| host         | 🚫                   | "localhost:3000"                                |                      |
+| hostname     | 🚫                   | "localhost"                                     |                      |
+| href         | 🚫                   | "http://localhost:3000/#/home/indexdetail?id=1" |                      |
+| origin       | 🚫                   | "http://localhost:3000"                         |                      |
+| port         | 🚫                   | "3000"                                          |                      |
+| protocol     | 🚫                   | "http:"                                         |                      |
+| assign ( )   | 🚫                   | ✅                                               |                      |
+| reload ( )   | 🚫                   | ✅                                               |                      |
+| replace ( )  | 🚫                   | ✅                                               |                      |
+| toString ( ) | 🚫                   | ✅                                               |                      |
+| valueOf ( )  | 🚫                   | ✅                                               |                      |
 
-#### useHistory
+思考🤔：useLocation() 生成的 location 对象（是 context 中存储的 history 库生成的 history 对象中存放的 location 对象）和 window.location 字段值不同的缘由阅读 history 库源码发现是：path 在 `stripBasename(path,basename) ` 方法中👇，为除去 path 中已有的 basename('/#') 部分，会误把 /#/a/b?k=1 处理为 /a/b?k=1，原本的 hash 部分被识别为 pathname 部分，且 search 部分误打误撞也被保留了下来（ window.location 中 serach 无法被识别是因为#后都会被记为 hash 路由部分，正常情况是 serach 部分应该在 hash 部分之前）
+
+```js
+function hasBasename(path, prefix) {
+  return path.toLowerCase().indexOf(prefix.toLowerCase()) === 0 && '/?#'.indexOf(path.charAt(prefix.length)) !== -1;
+}
+function stripBasename(path, prefix) {
+  return hasBasename(path, prefix) ? path.substr(prefix.length) : path;
+}
+```
+
+#### useHistory (history)
 
 `useHistory` 可以用来访问 hidtory 实例从而进行导航
 
@@ -114,7 +139,7 @@ const history = useHistory()//不确定这个 history 对象好使不
 
 //1. component
 // 🤔：props中已被注入三兄弟，有了Hook：不用组件层层传递三兄弟，随时随地useXXX就行
-// ❓：component是一个属性，每次渲染都会执行component中的内容（即重新构建组件），这样ok吗？
+// ❓：component是一个属性，每次渲染都会执行component中的内容（即重新构建组件）
 function User(props) { 
   return <h1>Hello {props.match.params.username}!</h1>;
 }
@@ -247,11 +272,15 @@ function User(props) {
 />
 ```
 
-### HashRouter
+### HashRouter 🌟
+
+*说在前面：react开发的是单页面应用程序，保持UI与URL的同步在react-router内有两种实现方式分别是 HashRouter&BrowserRouter*
 
 > 属于 Router 的一种，使用URL的哈希部分（window.location.hash）来保持UI与URL同步
 >
 > 实现原理：window.onhashchange
+
+***hashRouter的存在是为了支持旧版浏览器不支持 HTML5 history API 的情况，推荐使用 BrowserRouter***
 
 * basename<string>：所有URL的基础值，⚠️以 / 开头但不以 / 结尾
 
@@ -260,11 +289,11 @@ function User(props) {
   <Link to="/today"/> // renders <a href="#/calendar/today">
   ```
 
-### BrowserRouter
+### BrowserRouter 🌟
 
-> 属于 Router 的一种，使用 HTML5 的 history API（pushState、replaceState、popstate事件）使UI与URL保持同步
+> 属于 Router 的一种，使用 HTML5 的 history API 来保持UI与URL同步
 >
-> 实现原理：HTML5 history API
+> 实现原理：HTML5 history API 中的 popstate 事件
 
 ### IndexRoute 
 
@@ -292,10 +321,4 @@ function User(props) {
 </Route>
 ```
 
-## 响应式路由
 
-理解：响应手机、平板横向/纵向切换导致屏幕大小变换，从而动态改变路由界面布局。
-
-## 静态路由
-
-静态路由是在应用运行之前就固定好了路由结构，可以使用 [react-router-config ](https://link.zhihu.com/?target=https%3A//github.com/ReactTraining/react-router/tree/master/packages/react-router-config) 这个库来静态配置路由
