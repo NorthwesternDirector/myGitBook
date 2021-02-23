@@ -40,23 +40,23 @@ Q：为什么 React-Router 不和 React 封装在一起
 
 *以  localhost:3000/#/home/indexdetail?id=1 为例 👇：*（HashRouter&BrowserRouter 下表现一致）
 
-| 参数名       | useLocation         | Location                                        | 备注                 |
-| ------------ | ------------------- | ----------------------------------------------- | -------------------- |
-| hash         | 🌟 ""                | "#/home/indexdetail?id=1"                       |                      |
-| pathname     | "/home/indexdetail" | "/"                                             |                      |
-| search       | "?id=1"             | 🌟 ""                                            |                      |
-| state        | undefined           | 🚫                                               | 支持跳转携带一些状态 |
-| host         | 🚫                   | "localhost:3000"                                |                      |
-| hostname     | 🚫                   | "localhost"                                     |                      |
-| href         | 🚫                   | "http://localhost:3000/#/home/indexdetail?id=1" |                      |
-| origin       | 🚫                   | "http://localhost:3000"                         |                      |
-| port         | 🚫                   | "3000"                                          |                      |
-| protocol     | 🚫                   | "http:"                                         |                      |
-| assign ( )   | 🚫                   | ✅                                               |                      |
-| reload ( )   | 🚫                   | ✅                                               |                      |
-| replace ( )  | 🚫                   | ✅                                               |                      |
-| toString ( ) | 🚫                   | ✅                                               |                      |
-| valueOf ( )  | 🚫                   | ✅                                               |                      |
+| 参数名       | useLocation(location) | Location                                        | 备注                 |
+| ------------ | --------------------- | ----------------------------------------------- | -------------------- |
+| hash         | 🌟 ""                  | "#/home/indexdetail?id=1"                       |                      |
+| pathname     | "/home/indexdetail"   | "/"                                             |                      |
+| search       | "?id=1"               | 🌟 ""                                            |                      |
+| state        | undefined             | 🚫                                               | 支持跳转携带一些状态 |
+| host         | 🚫                     | "localhost:3000"                                |                      |
+| hostname     | 🚫                     | "localhost"                                     |                      |
+| href         | 🚫                     | "http://localhost:3000/#/home/indexdetail?id=1" |                      |
+| origin       | 🚫                     | "http://localhost:3000"                         |                      |
+| port         | 🚫                     | "3000"                                          |                      |
+| protocol     | 🚫                     | "http:"                                         |                      |
+| assign ( )   | 🚫                     | ✅                                               |                      |
+| reload ( )   | 🚫                     | ✅                                               |                      |
+| replace ( )  | 🚫                     | ✅                                               |                      |
+| toString ( ) | 🚫                     | ✅                                               |                      |
+| valueOf ( )  | 🚫                     | ✅                                               |                      |
 
 思考🤔：useLocation() 生成的 location 对象（是 context 中存储的 history 库生成的 history 对象中存放的 location 对象）和 window.location 字段值不同的缘由阅读 history 库源码发现是：path 在 `stripBasename(path,basename) ` 方法中👇，为除去 path 中已有的 basename('/#') 部分，会误把 /#/a/b?k=1 处理为 /a/b?k=1，原本的 hash 部分被识别为 pathname 部分，且 search 部分误打误撞也被保留了下来（ window.location 中 serach 无法被识别是因为#后都会被记为 hash 路由部分，正常情况是 serach 部分应该在 hash 部分之前）
 
@@ -75,7 +75,7 @@ function stripBasename(path, prefix) {
 
 与window.history进行对比👇：
 
-| 参数名                     | useHistory                | History | 备注                              |
+| 参数名                     | useHistory(history)       | History | 备注                              |
 | -------------------------- | ------------------------- | ------- | --------------------------------- |
 | action                     | -                         | 🚫       | 当前动作 (`PUSH` `REPLACE` `POP`) |
 | length                     | -                         | -       | history 堆栈中的条目数量          |
@@ -243,7 +243,7 @@ function User(props) {
 
 ### Link
 
-> `<a>  `元素的React 版本，可以接收 Router 的状态
+> `<a> ` 元素的 React 版本，可以接收 Router 的状态
 
 **传参**
 
@@ -274,7 +274,7 @@ function User(props) {
 
 ### HashRouter 🌟
 
-*说在前面：react开发的是单页面应用程序，保持UI与URL的同步在react-router内有两种实现方式分别是 HashRouter&BrowserRouter*
+*保持UI与URL的同步在react-router内有两种实现方式分别是 HashRouter&BrowserRouter*
 
 > 属于 Router 的一种，使用URL的哈希部分（window.location.hash）来保持UI与URL同步
 >

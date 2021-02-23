@@ -22,7 +22,7 @@ Q1: 在工场使用 window.history 方法时为啥均不刷新页面？
 
 ### pushState(state, title, url)
 
-前进到指定的 url，***不加载新页面，只改变url及状态***
+前进到指定的 url，***只改变 url及状态，不加载新页面***
 
 * `state`： 状态对象 state，包含一些路由携带的状态信息，popstate 事件的 state 属性会包含该历史记录条目状态对象的副本
 
@@ -36,23 +36,23 @@ Q1: 在工场使用 window.history 方法时为啥均不刷新页面？
 
 ### replaceState(state, title, url)
 
-用 url 替换当前的路由，***不加载新页面，只改变url及状态***
+用 url 替换当前的路由，***只改变 url及状态，不加载新页面***
 
 ## popstate 事件 🌟 
 
 > window.onpopstate 是 popstate 事件在 window 对象上的事件处理程序
 
-* popstate 事件只会在 same document 下，当 acticve history 记录在两个history记录之间切换时，被 window 调用。
+* popstate 事件只会在 same document 下，当 acticve history 记录在两个 history 记录之间切换时，被 window 调用。
 
 * 如果当前 acticve history 记录是由 pushState() 方法创建的，或是由 replceState() 覆盖替换的，popstate 事件的 state 属性将会包含当前 acticve history 记录的state对象的一个副本。
 
-**⚠️注意**：调用 history.pushState() 或者 history.replaceState() 不会触发 popstate 事件，popstate 事件只会在浏览器某些行为下触发, 比如点击后退、前进按钮（或者在 js 中调用 back()、forward()、go()方法），另外 a 标签的锚点也会触发该事件。
+**⚠️注意**：调用 history.pushState() 或者 history.replaceState() 不会触发 popstate 事件，***popstate 事件只会在浏览器某些行为下触发, 比如点击后退、前进按钮（或者在 js 中调用 back()、forward()、go()方法）***，另外 a 标签的锚点也会触发该事件。
 
-~~*猜测：React-Router  browersRouter 的实现是先将路由配置全部都推入栈中，底层通过 history.go() 的方法跳转来让 popstate 事件监听*~~
+~~*猜测：React-Router  browersRouter 的实现是先将路由配置全部都推入栈中，pushState&replaceState 底层通过 history.go() 的方法跳转来让 popstate 事件监听*~~
 
 深入学习：
 
-React-Router  BrowersRouter 可以改写代码让 pushState&replaceState 在调用的同时手动触发事件
+可以改写代码让 pushState&replaceState 在调用的同时手动触发事件 👇（history 库如何监听 pushState&replaceState 见后文）
 
 ```jsx
 const listener = function (type) {
@@ -92,9 +92,10 @@ window.addEventListener('replaceState', function(){}, false);
 
 * 不支持history API的浏览器使用了BrowserRouter 时，会弹警告并使用 window.location.href 进行跳转
 
-* 如何监听pushState&replaceState：（看图）
+* 如何监听pushState&replaceState：（以createBrowserHistory为例）
+
+  <img src="https://raw.githubusercontent.com/NorthwesternDirector/myGitBook/master/%E5%85%B6%E4%BB%96/%E5%BC%95%E5%85%A5%E5%9B%BE%E7%89%87/history.png"/>
 
 * 项目 basename 由`#` 调整为`/#`，是由于 history 库会强制变更，如果项目basename设置为`/miui/#`会被强制改为`#/miui/#`导致路径错误
-
 * 用户输入 `https://datum.xoiaomi.com//#/a` 导致path变为`//`，url解析时会将`//`前半部分视为协议部分，并最终解析为``https:/#/a`` 出现错误，故需要在页面加载时需要将 `//` 利用正则规则替换为 `/`
 
